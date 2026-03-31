@@ -1,0 +1,84 @@
+CREATE DATABASE IF NOT EXISTS resume_builder;
+USE resume_builder;
+
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS resumes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    title VARCHAR(100) NOT NULL DEFAULT 'My Resume',
+    template VARCHAR(50) DEFAULT 'classic',
+    full_name VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    location VARCHAR(100),
+    summary TEXT,
+    linked_in VARCHAR(255),
+    github VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS education (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    resume_id BIGINT NOT NULL,
+    institution VARCHAR(200) NOT NULL,
+    degree VARCHAR(200) NOT NULL,
+    year VARCHAR(50),
+    gpa VARCHAR(20),
+    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS skills (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    resume_id BIGINT NOT NULL,
+    skill_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    resume_id BIGINT NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    description TEXT,
+    tech_stack VARCHAR(500),
+    link VARCHAR(255),
+    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS experience (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    resume_id BIGINT NOT NULL,
+    company VARCHAR(200) NOT NULL,
+    role VARCHAR(200) NOT NULL,
+    duration VARCHAR(100),
+    description TEXT,
+    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS certifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    resume_id BIGINT NOT NULL,
+    cert_name VARCHAR(200) NOT NULL,
+    issuer VARCHAR(200),
+    year VARCHAR(50),
+    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS resume_scores (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    resume_id BIGINT NOT NULL UNIQUE,
+    ats_score DOUBLE DEFAULT 0,
+    keyword_score DOUBLE DEFAULT 0,
+    formatting_score DOUBLE DEFAULT 0,
+    suggestions TEXT,
+    analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (resume_id) REFERENCES resumes(id) ON DELETE CASCADE
+);
