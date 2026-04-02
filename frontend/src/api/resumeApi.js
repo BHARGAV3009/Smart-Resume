@@ -1,3 +1,4 @@
+//resumeApi.js
 import api from './axiosConfig'
 
 export const getResumes = () => api.get('/resumes')
